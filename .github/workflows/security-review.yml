@@ -21,12 +21,12 @@ jobs:
         run: |
           git diff origin/${{ github.base_ref }}...HEAD > diff.txt
 
-      - name: Run CodeSentinel
-        uses: docker://ghcr.io/samuelhenris/codesentinel:latest
-        env:
-          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
-        with:
-          args: diff.txt
+      - name: Build and run CodeSentinel
+        run: |
+          docker build -t codesentinel .
+          docker run --rm -i \
+            -e DEEPSEEK_API_KEY=${{ secrets.DEEPSEEK_API_KEY }} \
+            codesentinel < diff.txt > security-report.md
 
       - name: Comment PR
         if: always()
