@@ -1,0 +1,26 @@
+[
+  {
+    "severity": "Critical",
+    "type": "SQL Injection",
+    "file": "app.py",
+    "line": 4,
+    "description": "User input is directly interpolated into SQL query without sanitization, allowing SQL injection attacks.",
+    "fix": "Use parameterized queries: query = 'SELECT * FROM users WHERE id = ?'; cursor.execute(query, (user_id,))"
+  },
+  {
+    "severity": "Critical",
+    "type": "Hardcoded Secret",
+    "file": "config.py",
+    "line": 1,
+    "description": "Hardcoded OpenAI API key exposes sensitive credentials, allowing unauthorized access to OpenAI services and potential financial abuse.",
+    "fix": "Remove the hardcoded key and use environment variables: OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')"
+  },
+  {
+    "severity": "High",
+    "type": "Cross-Site Scripting (XSS)",
+    "file": "utils.js",
+    "line": 1,
+    "description": "User input from req.body.name is directly assigned to a variable without sanitization or encoding, which can lead to stored or reflected XSS if this value is later rendered in HTML or used in client-side scripts.",
+    "fix": "Sanitize the input using a library like DOMPurify or encode it for the context where it will be used. For example: var userInput = DOMPurify.sanitize(req.body.name);"
+  }
+]

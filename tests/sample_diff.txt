@@ -1,0 +1,17 @@
+diff --git a/app.py b/app.py
+@@ -1,5 +1,10 @@
++import sqlite3
++
++def get_user(user_id):
++    query = f"SELECT * FROM users WHERE id = {user_id}"
++    return query
+
+diff --git a/config.py b/config.py
+@@ -1,1 +1,1 @@
+-# placeholder
++OPENAI_API_KEY = "sk-proj-1234567890abcdef"
+
+diff --git a/utils.js b/utils.js
+@@ -1,1 +1,1 @@
+-var userInput = '';
++var userInput = req.body.name; // potential XSS
