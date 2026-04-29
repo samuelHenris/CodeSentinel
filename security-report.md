@@ -1,45 +1,22 @@
 ## CodeSentinel Security Review
 
-**3 issue(s) found**
+3 issue(s) found
 
 | Severity | Count |
 |----------|-------|
-| 🔴 Critical | 2 |
-| 🟠 High | 1 |
+| Critical | 2 |
+| High | 1 |
 
----
-### 1. 🔴 SQL Injection
-**File:** `app.py` line 4
+Critical: SQL Injection in `app.py` (line 4)
+User input is directly concatenated into SQL query without sanitization, allowing SQL injection attacks.
+Suggested fix: Use parameterized queries: query = 'SELECT * FROM users WHERE id = ?'; cursor.execute(query, (user_id,))
 
-**Description:** User input is directly interpolated into SQL query without sanitization, allowing SQL injection attacks.
+Critical: Hardcoded Secret in `config.py` (line 1)
+Hardcoded OpenAI API key exposes sensitive credentials, allowing unauthorized access to OpenAI services and potential financial abuse.
+Suggested fix: Remove the hardcoded key and use environment variables: OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 
-**Fix:**
-```
-Use parameterized queries: query = 'SELECT * FROM users WHERE id = ?'; cursor.execute(query, (user_id,))
-```
+High: Cross-Site Scripting (XSS) in `utils.js` (line 1)
+User input from req.body.name is directly assigned to a variable without sanitization or encoding, which can lead to stored or reflected XSS if this value is later rendered in HTML or executed as code.
+Suggested fix: Sanitize the input using a library like DOMPurify or encode output with context-appropriate escaping (e.g., encodeURIComponent for URLs, escapeHtml for HTML). Example: var userInput = DOMPurify.sanitize(req.body.name);
 
----
-### 2. 🔴 Hardcoded Secret
-**File:** `config.py` line 1
-
-**Description:** Hardcoded OpenAI API key exposes sensitive credentials, allowing unauthorized access to OpenAI services and potential financial abuse.
-
-**Fix:**
-```
-Remove the hardcoded key and use environment variables: OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
-```
-
----
-### 3. 🟠 Cross-Site Scripting (XSS)
-**File:** `utils.js` line 1
-
-**Description:** User input from req.body.name is directly assigned to a variable without sanitization or encoding, which can lead to stored or reflected XSS if this value is later rendered in HTML or used in client-side scripts.
-
-**Fix:**
-```
-Sanitize the input using a library like DOMPurify or encode it for the context where it will be used. For example: var userInput = DOMPurify.sanitize(req.body.name);
-```
-
----
-
-> 🤖 Automated review by [CodeSentinel](https://github.com/samuelHenris/CodeSentinel) 
+Automated review by [CodeSentinel](https://github.com/samuelHenris/CodeSentinel)
