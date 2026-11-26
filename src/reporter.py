@@ -11,7 +11,9 @@ def format_pr_comment(findings: list) -> str:
 
     counts = {"Critical": 0, "High": 0, "Medium": 0, "Low": 0}
     for f in findings:
-        counts[f.get('severity', 'Low')] += 1
+        sev = str(f.get('severity', 'Low')).capitalize()
+        f['severity'] = sev if sev in counts else 'Low'
+        counts[f['severity']] += 1
 
     comment = "## CodeSentinel Security Review\n\n"
     comment += f"{len(findings)} issue(s) found\n\n"

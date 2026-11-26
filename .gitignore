@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+.env
+security-report.md
+findings.json
+diff.txt

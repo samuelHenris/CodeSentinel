@@ -1,3 +1,4 @@
+import json
 import os
 from openai import OpenAI
 
@@ -32,7 +33,7 @@ class SecurityScanner:
         all_findings = []
         for filename, changes in file_changes.items():
             if not filename.endswith(
-                ('.py','.js','.java','.ts','.go','.rb','.php','.yaml','.yml','.json','.tf')
+                ('.py','.js','.java','.ts','.go','.rb','.php','.yaml','.yml','.json','.tf','.sh','.sql','.env','.ini','.cfg','.toml')
             ):
                 continue
 
@@ -61,11 +62,18 @@ class SecurityScanner:
         return all_findings
 
     def _parse_response(self, content: str) -> list:
-        if content.startswith('```json'):
-            content = content[7:-3]
-        elif content.startswith('```'):
-            content = content[3:-3]
+        """Parse the model's reply as JSON. Never executes it."""
+        content = (content or "").strip()
+        if content.startswith("```"):
+            content = content.strip("`")
+            if content.lower().startswith("json"):
+                content = content[4:]
+            content = content.strip()
         try:
-            return eval(content)  # Use json.loads in production
-        except:
+            data = json.loads(content)
+        except json.JSONDecodeError:
+            print("Warning: model reply was not valid JSON, skipping this file.")
             return []
+        if not isinstance(data, list):
+            return []
+        return [f for f in data if isinstance(f, dict)]

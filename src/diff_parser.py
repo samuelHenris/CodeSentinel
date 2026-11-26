@@ -6,7 +6,7 @@ def parse_diff(diff_text: str) -> list:
     current_line = 0
     for line in diff_text.split('\n'):
         if line.startswith('diff --git'):
-            current_file = line.split(' ')[2].replace('a/', '')
+            current_file = line.split(' ')[-1].removeprefix('b/')
         elif line.startswith('@@'):
             parts = line.split(' ')
             if len(parts) >= 3:
